@@ -1,23 +1,23 @@
 package github.com.PERS23.Boids;
 
+import java.awt.*;
 import java.util.List;
 
-public class Distancing implements BoidRule {
-
+public class Distancing implements MovementRule {
     @Override
-    public Velocity calculate(List<Boid> flock, Boid individual) {
+    public Coordinate2D calculate(List<Body> bodies, List<Boid> flock, Boid individual) {
         /* We initialise the base to zero as we want this rule to give us a vector which when added to the current
-         * position moves a boid away from those near it. */
-        Velocity fVelocity = new Velocity(0, 0);
+         * position moves the individual away from anything near it. */
+        Coordinate2D fleeVelocity = new Coordinate2D(0.0, 0.0);
 
-        for (Boid b : flock) {
-            if (b != individual && b.position.distance(individual.position) < 100) {
+        for (Body b : bodies) {                                   // Considering all bodies in the scene, not just boids
+            if (b != individual && b.getPosition().distance(individual.getPosition()) < 100) {
                    // Give it magnitude equal to the distance between to obstacle and it (in the opposite direction ofc)
-                fVelocity.xMagnitude -= (b.position.x - individual.position.x);
-                fVelocity.yMagnitude -= (b.position.y - individual.position.y);
+                fleeVelocity.x -= (b.getPosition().x - individual.getPosition().x);
+                fleeVelocity.y -= (b.getPosition().y - individual.getPosition().y);
             }
         }
 
-        return fVelocity;
+        return fleeVelocity;
     }
 }

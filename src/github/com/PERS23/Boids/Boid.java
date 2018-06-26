@@ -1,14 +1,10 @@
 package github.com.PERS23.Boids;
 
-import java.awt.*;
+import javafx.scene.shape.Polygon;
 
-public class Boid {
-
-    public Point position;
-    public Velocity velocity;
-
-    public Boid(Point position, Velocity velocity) {
-        position = position;
-        velocity = velocity;
+public class Boid extends Body {
+    public Boid(Coordinate2D position) {
+        super(position);
+        mAppearance = new Polygon();
     }
 }

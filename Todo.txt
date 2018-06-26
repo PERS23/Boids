@@ -1,0 +1,4 @@
+Todo:
+* Research polygon, and change update method so that it moves the shape relative to the center
+* Check over coordinate class
+* Link environment to scene
