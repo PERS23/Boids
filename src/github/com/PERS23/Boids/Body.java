@@ -2,50 +2,68 @@ package github.com.PERS23.Boids;
 
 import javafx.scene.shape.Shape;
 
+import java.awt.*;
+
 
 public abstract class Body {
     protected Shape mAppearance;
-    private Coordinate2D mPosition;
-    private Coordinate2D mVelocity;
+    protected Velocity2D mVelocity;
 
-    public Body(Coordinate2D position) {
-        this(position, new Coordinate2D());
+    public Body(double x, double y, Shape appearance) {
+        this(x, y, appearance, new Velocity2D());
     }
 
-    public Body(Coordinate2D position, Coordinate2D velocity) {
-        this.mPosition = position;
-        this.mVelocity = velocity;
+    public Body(double x, double y, Shape appearance, Velocity2D velocity) {
+        mAppearance = appearance;
+        mAppearance.setLayoutX(x);
+        mAppearance.setLayoutY(y);
+        mVelocity = velocity;
     }
 
-    public Coordinate2D getPosition() {
-        return mPosition;
+    public double getX() {
+        return mAppearance.getLayoutX();
     }
 
-    public Coordinate2D getVelocity() {
+    public double getY() {
+        return mAppearance.getLayoutY();
+    }
+
+    public Velocity2D getVelocity() {
         return mVelocity;
     }
 
-    public void addVelocity(Coordinate2D dVelocity) {
-        this.mVelocity.translate(dVelocity.x, dVelocity.y);
+    public Shape getAppearance() {
+        return mAppearance;
+    }
+
+    public void addVelocity(Velocity2D v) {
+        this.mVelocity.addVelocity(v);
+    }
+
+    public Double distanceFrom(Body other) {
+        double a = other.getX() - this.getX();
+        double b = other.getY() - this.getY();
+        return Math.sqrt(a * a + b * b);
     }
 
     public void update() {
-        this.mPosition.translate(mVelocity.x, mVelocity.y);
-        mAppearance.setLayoutX(mPosition.x);
-        mAppearance.setLayoutY(mPosition.y);
+        mAppearance.setTranslateX(mVelocity.dx);
+        mAppearance.setTranslateY(mVelocity.dy);
+
+        mAppearance.setLayoutX(getX() + mAppearance.getTranslateX());
+        mAppearance.setLayoutY(getY() + mAppearance.getTranslateY());
 
         double adjacent, opposite;
 
-        if (Math.abs(mVelocity.x) > Math.abs(mVelocity.y)) {
-            adjacent = mVelocity.x;
-            opposite = mVelocity.y;
+        if (Math.abs(mVelocity.dx) > Math.abs(mVelocity.dy)) {
+            adjacent = mVelocity.dx;
+            opposite = mVelocity.dy;
         } else {
-            adjacent = mVelocity.y;
-            opposite = mVelocity.x;
+            adjacent = mVelocity.dy;
+            opposite = mVelocity.dx;
         }
 
-        Double angle = Math.toDegrees(Math.atan(opposite/adjacent));
-
+        Double angle = Math.toDegrees(Math.atan(opposite/adjacent)) + 90;
         mAppearance.setRotate(angle);
     }
 }

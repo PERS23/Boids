@@ -1,22 +1,28 @@
 package github.com.PERS23.Boids;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.List;
 
 public class Centering implements MovementRule {
     @Override
-    public Coordinate2D calculate(List<Body> bodies, List<Boid> flock, Boid individual) {
-        Coordinate2D center = new Coordinate2D(flock.get(0).getPosition());
+    public Velocity2D calculate(List<Body> bodies, List<Boid> flock, Boid individual) {
+        Point2D.Double center = new Point2D.Double();                               // Velocity acting as point
 
-        for (int i = 1; i < flock.size(); i++) {
+        for (int i = 0; i < flock.size(); i++) {
             Boid b = flock.get(i);
             if (b != individual) {                                                       // Don't include the individual
-                center.translate(b.getPosition().x, b.getPosition().y);                      // Simply sum all positions
+                center.x += b.getX();
+                center.y += b.getY();                                                        // Simply sum all positions
             }
         }
-                                                                     // N - 1 because we're not including the individual
-        double x = center.x / (flock.size() - 1), y = center.y / (flock.size() - 1);
-                                 // Return a velocity that will have magnitude equal to 1% of the distance to the center
-        return new Coordinate2D(x / 100, y / 100);
+
+        if (flock.size() > 1) { // Return velocity that will have magnitude equal to 0.01% of the distance to the center
+            double x = (center.x / (flock.size() - 1) - individual.getX()) / 1000.0;
+            double y = (center.y / (flock.size() - 1) - individual.getY()) / 1000.0;
+            return new Velocity2D(x, y);
+        }
+
+        return new Velocity2D(center.x, center.y);
     }
 }
