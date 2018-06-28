@@ -5,27 +5,29 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Group;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Circle;
+import javafx.scene.paint.Paint;
 import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
-    private Environment mEnvironment;
+    private final int MIN_TICK_DURATION = 30;
+
+    private Environment mEnvironment = new Environment();
 
     @FXML private Pane root;
 
-    public Controller() {
-        mEnvironment = new Environment();
-    }
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        root.setOnMouseClicked(action -> {
-            mEnvironment.addBoid(action.getX(), action.getY(), root);
+        root.setOnMousePressed(action -> {
+            if (action.isPrimaryButtonDown()) {
+                mEnvironment.addBoid(action.getX(), action.getY(), root);
+            } else if (action.isSecondaryButtonDown()) {
+                mEnvironment.addObstacle(action.getX(), action.getY(), root);
+            }
         });
 
         root.widthProperty().addListener(((observable, oldValue, newValue) -> {
@@ -38,7 +40,7 @@ public class Controller implements Initializable {
 
         Timeline timeline = new Timeline();
         timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(30), action -> {
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(MIN_TICK_DURATION), action -> {
             mEnvironment.update();
         }));
 

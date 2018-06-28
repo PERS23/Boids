@@ -1,34 +1,23 @@
 package github.com.PERS23.Boids;
 
-import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.geometry.Bounds;
-import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Environment {
-    private final double vlim = 3.0;
+    private final double V_LIM = 3.0;
+    private final double BOUND_RADIUS = 40;
 
-    private List<MovementRule> mRules = new ArrayList<>();
-
-    private List<Body> mBodies = new ArrayList<>();
-    private List<Boid> mBoids = new ArrayList<>();
     private Double mContainerHeight;
     private Double mContainerWidth;
-
-    public Environment() {
-        mRules.add(new Centering());
-        mRules.add(new Distancing());
-        mRules.add(new Matching());
-    }
+    private List<Body> mBodies = new ArrayList<>();
+    private List<Boid> mBoids = new ArrayList<>();
 
     public void update() {
         for (Boid b : mBoids) {
-
-            for (MovementRule rule : mRules) {
-                Velocity2D newVelocity = rule.calculate(mBodies, mBoids, b);               // Calculate the new velocity
+            for (MovementRuleSet value : MovementRuleSet.values()) {
+                Vector2D newVelocity = value.getRule().calculate(mBodies, mBoids, b);      // Calculate the new velocity
                 b.addVelocity(newVelocity);                                                     // Add it to the current
             }
             bound(b);
@@ -40,27 +29,27 @@ public class Environment {
     private void bound(Boid b) {
         double x = b.getVelocity().dx, y = b.getVelocity().dy;
 
-        if (b.getX() < 40) {
-            x = vlim;
-        } else if (b.getX() > mContainerWidth - 40) {
-            x = -1.0 * vlim;
+        if (b.getX() <= BOUND_RADIUS) {   // If at or past the leftmost bound, turn it completely around as fast as poss
+            x = V_LIM;
+        } else if (b.getX() >= mContainerWidth - BOUND_RADIUS) {
+            x = -1.0 * V_LIM;
         }
 
-        if (b.getY() < 40) {
-            y = vlim;
-        } else if (b.getY() > mContainerHeight - 40) {
-            y = -1.0 * vlim;
+        if (b.getY() <= BOUND_RADIUS) {
+            y = V_LIM;
+        } else if (b.getY() >= mContainerHeight - BOUND_RADIUS) {
+            y = -1.0 * V_LIM;
         }
 
         b.getVelocity().setSpeed(x, y);
     }
 
     private void limitVelocity(Boid b) {
-        if (Math.abs(b.mVelocity.dx) > vlim) {
-            b.getVelocity().dx = (b.getVelocity().dx / Math.abs(b.mVelocity.dx)) * vlim;
+        if (Math.abs(b.mVelocity.dx) > V_LIM) {
+            b.getVelocity().dx = (b.getVelocity().dx / Math.abs(b.mVelocity.dx)) * V_LIM;
         }
-        if (Math.abs(b.mVelocity.dy) > vlim) {
-            b.getVelocity().dy = (b.getVelocity().dy / Math.abs(b.mVelocity.dy)) * vlim;
+        if (Math.abs(b.mVelocity.dy) > V_LIM) {
+            b.getVelocity().dy = (b.getVelocity().dy / Math.abs(b.mVelocity.dy)) * V_LIM;
         }
     }
 
@@ -74,6 +63,7 @@ public class Environment {
     public void addObstacle(double x, double y, Pane container) {
         Obstacle o = new Obstacle(x, y);
         mBodies.add(o);
+        container.getChildren().add(o.getAppearance());
     }
 
     public void setContainerHeight(Double containerHeight) {

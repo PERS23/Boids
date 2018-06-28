@@ -1,9 +1,10 @@
 Todo:
-* Fix angling and tone down distancing
-* fix where adding the first one doesn't appear
+* Decouple velocity in body a bit more from the rest of the system
 
 Done:
-* Research polygon, and change update method so that it moves the shape relative to the center DONE
-* Check over coordinate class DONE
-* Link environment to scene DONE
-* Debug rules and properly implement scene scaling so they don't go stupid fast DONE
+* Research polygon, and change update method so that it moves the shape relative to the center
+* Check over coordinate class
+* Link environment to scene
+* Debug rules and properly implement scene scaling so they don't go stupid fast
+* Fix angling and tone down distancing
+* fix where adding the first one doesn't appear

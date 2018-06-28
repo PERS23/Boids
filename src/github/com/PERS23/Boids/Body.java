@@ -2,18 +2,15 @@ package github.com.PERS23.Boids;
 
 import javafx.scene.shape.Shape;
 
-import java.awt.*;
-
-
 public abstract class Body {
     protected Shape mAppearance;
-    protected Velocity2D mVelocity;
+    protected Vector2D mVelocity;
 
     public Body(double x, double y, Shape appearance) {
-        this(x, y, appearance, new Velocity2D());
+        this(x, y, appearance, new Vector2D());
     }
 
-    public Body(double x, double y, Shape appearance, Velocity2D velocity) {
+    public Body(double x, double y, Shape appearance, Vector2D velocity) {
         mAppearance = appearance;
         mAppearance.setLayoutX(x);
         mAppearance.setLayoutY(y);
@@ -28,7 +25,7 @@ public abstract class Body {
         return mAppearance.getLayoutY();
     }
 
-    public Velocity2D getVelocity() {
+    public Vector2D getVelocity() {
         return mVelocity;
     }
 
@@ -36,7 +33,7 @@ public abstract class Body {
         return mAppearance;
     }
 
-    public void addVelocity(Velocity2D v) {
+    public void addVelocity(Vector2D v) {
         this.mVelocity.addVelocity(v);
     }
 
@@ -47,23 +44,8 @@ public abstract class Body {
     }
 
     public void update() {
-        mAppearance.setTranslateX(mVelocity.dx);
-        mAppearance.setTranslateY(mVelocity.dy);
-
-        mAppearance.setLayoutX(getX() + mAppearance.getTranslateX());
-        mAppearance.setLayoutY(getY() + mAppearance.getTranslateY());
-
-        double adjacent, opposite;
-
-        if (Math.abs(mVelocity.dx) > Math.abs(mVelocity.dy)) {
-            adjacent = mVelocity.dx;
-            opposite = mVelocity.dy;
-        } else {
-            adjacent = mVelocity.dy;
-            opposite = mVelocity.dx;
-        }
-
-        Double angle = Math.toDegrees(Math.atan(opposite/adjacent)) + 90;
-        mAppearance.setRotate(angle);
+        mAppearance.setLayoutX(getX() + mVelocity.dx);
+        mAppearance.setLayoutY(getY() + mVelocity.dy);
+        mAppearance.setRotate(mVelocity.angleOf() + 90); // Adding 90 to offset the screen coords from regular ones
     }
 }
